@@ -6,7 +6,7 @@ import { Circle } from "lucide-react";
 import { CheckIcon } from "@radix-ui/react-icons";
 
 import { cn } from "../lib/utils";
-import { RadioGroupContext } from "src/ui/RadioGroupContext/RadioGroupContext";
+import { RadioGroupContext } from "./RadioGroupContext/RadioGroupContext";
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,

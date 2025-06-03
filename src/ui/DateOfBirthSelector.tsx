@@ -2,8 +2,8 @@ import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
 import CalenderIcon from "../../public/assets/CalenderIcon";
 import * as React from "react";
-import { Button } from "src/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "src/ui/popover";
+import { Button } from "./button";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { cn } from "../lib/utils";
 import { Calendar } from "./DobCalendar";
 

@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from "react";
 import { cn } from "../lib/utils";
-import { Text as MainText } from "src/ui/text";
+import { Text as MainText } from "./text";
 /** Component for a level 1 heading with a font size of 32px and semibold font weight
  *
  * @param Example  "Happiness Program for Youth"

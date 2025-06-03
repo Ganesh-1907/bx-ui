@@ -1,5 +1,5 @@
 import { isArray } from "lodash";
-import { cn } from "src/lib/utils";
+import { cn } from "./utils";
 /**
  * This function currently we can use in input, select, multiselect
  * @param error error of the component

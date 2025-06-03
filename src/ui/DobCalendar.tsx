@@ -7,7 +7,7 @@ import {
   DayPicker,
   DropdownProps,
 } from "react-day-picker";
-import { buttonVariants } from "src/ui/button";
+import { buttonVariants } from "./button";
 import * as loc from "date-fns/locale";
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectItems,
   SelectTrigger,
   SelectValue,
-} from "src/ui/select";
+} from "./select";
 import { cn } from "../lib/utils";
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 

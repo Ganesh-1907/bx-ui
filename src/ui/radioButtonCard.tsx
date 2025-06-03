@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import { Label } from "src/ui/label";
-import { RadioGroupCircleItem } from "src/ui/radio-group";
-import { Text } from "src/ui/text";
-import { useRadioGroupContext } from "src/ui/RadioGroupContext/RadioGroupContext";
+import { Label } from "./label";
+import { RadioGroupCircleItem } from "./radio-group";
+import { Text } from "./text";
+import { useRadioGroupContext } from "./RadioGroupContext/RadioGroupContext";
 
 interface RadioItemProps {
   value: any;

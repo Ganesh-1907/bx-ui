@@ -1,6 +1,6 @@
 {
   "name": "bx-components-ui",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "npm package for bx-ui",
   "main": "index.js",
   "scripts": {
