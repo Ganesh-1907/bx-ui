@@ -1,4 +1,4 @@
-import CalenderIcon from "../../public/assets/CalenderIcon";
+import CalenderIcon from "../assets/CalenderIcon";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";

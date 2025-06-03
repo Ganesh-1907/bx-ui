@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { useTranslation } from "next-i18next";
-import CalenderIcon from "../../public/assets/CalenderIcon";
+import CalenderIcon from "../assets/CalenderIcon";
 import * as React from "react";
 import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";

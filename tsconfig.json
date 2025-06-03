@@ -24,9 +24,12 @@
       "@public/*": ["public/*"],
       "@public": ["public"]
     },
-    "incremental": true
-  },
- "include": ["src", "index.ts"],
+    "incremental": true,
 
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true
+  },
+  "include": ["src", "src/index.ts"],
   "exclude": ["node_modules"]
 }

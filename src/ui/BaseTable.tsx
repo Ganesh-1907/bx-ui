@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "../ui/table";
 
-import ClearAll from "../../public/assets/ClearAll";
+import ClearAll from "../assets/ClearAll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-import DropDown from "../../public/assets/DropDown"
+import DropDown from "../assets/DropDown"
 import { useTranslation } from "next-i18next";
 import { debounce } from "lodash";
 interface IBaseTable<TData, TValue> {

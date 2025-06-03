@@ -1,7 +1,7 @@
 "use client";
 
 import GetScrollTypesAlert from "../ui/GetScrollAlert";
-import DropDown from "@public/assets/DropDown";
+import DropDown from "src/assets/DropDown";
 import { uniqBy } from "lodash";
 import { X } from "lucide-react";
 import { useTranslation } from "next-i18next";
@@ -18,7 +18,7 @@ import {
 } from "./command";
 import { cn } from "../lib/utils";
 import { ccn } from "../lib/CommonComponentsUtil";
-import DropDownArrow from "../../public/assets/DropDown";
+import DropDownArrow from "../assets/DropDown";
 
 // Define the shape of each data item
 export type DataItem = Record<"value" | "label", string>;

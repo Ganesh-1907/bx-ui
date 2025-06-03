@@ -1,7 +1,7 @@
 "use client";
 
-import CrossIcon from "../../public/assets/CrossIcon";
-import DropDownArrow from "../../public/assets/DropDown";
+import CrossIcon from "../assets/CrossIcon";
+import DropDownArrow from "../assets/DropDown";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { Search } from "lucide-react";
