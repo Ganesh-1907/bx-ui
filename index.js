@@ -1,6 +1,7 @@
+import './src/styles/global.css';
 export * from './src/ui/BaseTable';
 export * from './src/ui/DateCalendar';
-export * from './ui/DateField';
+export * from './src/ui/DateField';
 export * from './src/ui/DateOfBirthSelector';
 export * from './src/ui/Formfield';
 export * from './src/ui/GetScrollAlert';

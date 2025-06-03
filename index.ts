@@ -1,4 +1,4 @@
-
+import './src/styles/global.css'
 
 export * from './src/ui/BaseTable';
 export * from './src/ui/DateCalendar';
