@@ -14,7 +14,7 @@ const RadioGroup = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <RadioGroupContext.Provider
-      value={{ value: props.value, disabled: props.disabled }}
+      value={{ value: props?.value as string , disabled: props.disabled }}
     >
       <RadioGroupPrimitive.Root
         className={cn("grid gap-2", className)}

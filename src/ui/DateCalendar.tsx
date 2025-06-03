@@ -6,7 +6,7 @@ import { cn } from "../lib/utils";
 import { buttonVariants } from "src/ui/button";
 import dayjs from "dayjs";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type DateCalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function DateCalendar({
   className,
@@ -17,7 +17,7 @@ function DateCalendar({
   fromDate,
   toDate,
   ...props
-}: CalendarProps & { count?: number }) {
+}: DateCalendarProps & { count?: number }) {
   return (
     <DayPicker
       weekStartsOn={1}

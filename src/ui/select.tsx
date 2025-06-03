@@ -6,7 +6,8 @@ import * as React from "react";
 
 import { useRef } from "react";
 import { cn } from "../lib/utils";
-import { Input, InputProps } from "./input";
+import { Input } from "./input";
+import { InputProps } from "react-day-picker";
 /**
  * Select Context interface
  */

@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from "./select";
 import { useEffect, useState } from "react";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
 import dayjs from "dayjs";
 import * as loc from "date-fns/locale";
 
@@ -43,7 +42,7 @@ function DateRangePicker({
     _e(_event);
   };
 
-  const languageCode = useGetLanguageCode();
+  const languageCode = 'en'
 
   const locale =
     languageCode === "en"

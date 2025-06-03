@@ -1,7 +1,7 @@
 "use client";
 
-import CrossIcon from "@public/assets/CrossIcon";
-import DropDownArrow from "@public/assets/DropDownArrow";
+import CrossIcon from "../../public/assets/CrossIcon";
+import DropDownArrow from "../../public/assets/DropDown";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { Search } from "lucide-react";
@@ -10,7 +10,7 @@ import * as React from "react";
 import { useRef } from "react";
 import { cn } from "../lib/utils";
 import { Button } from "./button";
-import { ccn } from "src/utility/CommonComponentsUtil";
+import { ccn } from "../lib/CommonComponentsUtil";
 import { Input } from "./input";
 type DropDownContextType = {
   value: any;

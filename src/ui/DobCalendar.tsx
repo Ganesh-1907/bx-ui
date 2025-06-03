@@ -8,6 +8,7 @@ import {
   DropdownProps,
 } from "react-day-picker";
 import { buttonVariants } from "src/ui/button";
+import * as loc from "date-fns/locale";
 import {
   Select,
   SelectContent,
@@ -17,8 +18,6 @@ import {
   SelectValue,
 } from "src/ui/select";
 import { cn } from "../lib/utils";
-import useGetLanguageCode from "src/utility/useGetLanguageCode";
-import { getLocaleObject } from "pages/courses/[id]/participants/add";
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 /**
@@ -35,8 +34,12 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
-  const languageCode = useGetLanguageCode();
-  const localeObject = getLocaleObject(languageCode);
+  const languageCode = 'en';
+  const localeObject =
+      languageCode === "en"
+        ? loc["enUS"]
+        : Object.values(loc).find((language) => language.code === languageCode);
+  
   const formatWeekdayName = (date: Date) => {
     return dayjs(date).format("ddd").charAt(0);
   };
