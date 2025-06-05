@@ -1,6 +1,6 @@
 {
-  "name": "bx-components-ui",
-  "version": "1.0.17",
+  "name": "pf-common-components",
+  "version": "1.0.0",
   "description": "npm package for bx-ui",
   "main": "dist/index.js",
   "scripts": {
