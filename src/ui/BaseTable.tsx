@@ -9,7 +9,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {Text} from '../ui/text'
+import { Text } from "../ui/text";
 import {
   Table,
   TableBody,
@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-import DropDown from "../assets/DropDown"
+import DropDown from "../assets/DropDown";
 import { useTranslation } from "next-i18next";
 import { debounce } from "lodash";
 interface IBaseTable<TData, TValue> {
@@ -499,7 +499,7 @@ export function BaseTable<TData, TValue>({
                     className="flex h-10 w-[192px] flex-row justify-between rounded-xl hover:border hover:border-solid hover:border-primary"
                     id="base-table-column-selector-button"
                   >
-                    {t("course.find_course:columns")}
+                    Columns
                     <DropDown />
                   </Button>
                 </DropdownMenuTrigger>
@@ -515,9 +515,7 @@ export function BaseTable<TData, TValue>({
                           onCheckedChange={handleSelectAllChange}
                           id="base-table-column-selector-select-all-checkbox"
                         />
-                        <Text className="text-sm font-bold">
-                          {t("course.find_course:select_all")}
-                        </Text>
+                        <Text className="text-sm font-bold">Select All</Text>
                       </div>
                       {table
                         .getAllColumns()
@@ -588,7 +586,7 @@ export function BaseTable<TData, TValue>({
                         onClick={applyColumnVisibilityChanges}
                         id="base-table-column-selector-apply-button"
                       >
-                        {t("apply_button")}
+                        Apply
                       </Button>
                     </div>
                   </div>
@@ -847,9 +845,7 @@ export function BaseTable<TData, TValue>({
                     className="h-8 w-[131px]"
                     id="base-table-page-size"
                   >
-                    <Text className="text-grey1">
-                      {t("course.find_course:showing")}
-                    </Text>
+                    <Text className="text-grey1">Showing</Text>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent side="top">
@@ -869,9 +865,7 @@ export function BaseTable<TData, TValue>({
                     )}
                   </SelectContent>
                 </Select>
-                <Text className="text-sm font-normal">
-                  {t("course.find_course:of")} {total}
-                </Text>
+                <Text className="text-sm font-normal">of {total}</Text>
               </div>
             )}
           </div>
@@ -945,7 +939,7 @@ const DataPagination = ({
           disabled={current <= 1}
           id="base-table-pagination-prev-button"
         >
-          {t("bx_v1:cm_prev")}
+          Prev
         </Button>
       )}
       {/* pages buttons */}
@@ -979,7 +973,7 @@ const DataPagination = ({
           disabled={current >= pageCount}
           id="base-table-pagination-next-button"
         >
-          {t("next")}
+          Next
         </Button>
       )}
     </div>
