@@ -3,7 +3,6 @@ import "./global.css";
 export * from "./ui/BaseTable";
 export * from "./ui/DateCalendar";
 export * from "./ui/DateField";
-export * from "./ui/DateOfBirthSelector";
 export * from "./ui/Formfield";
 export * from "./ui/GetScrollAlert";
 export * from "./ui/SelectCommand";

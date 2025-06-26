@@ -410,7 +410,6 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
-  const { t } = useTranslation(["common", "course.find_course", "bx_v1"]);
 
   /**
    * This function will set the drop down to open or close
@@ -924,8 +923,6 @@ const DataPagination = ({
       );
     }
   }
-
-  const { t } = useTranslation(["common", "bx_v1"]);
 
   return (
     <div className="flex flex-row items-center space-x-2 self-center p-2 text-xs">

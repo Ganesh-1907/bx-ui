@@ -33,18 +33,18 @@ type DropDownContextType = {
 // Here we have to create the context for sending the data to child components
 const dropDownContext = React.createContext<DropDownContextType>({
   value: null,
-  onChange: () => {},
+  onChange: () => { },
   selectedLabel: "",
-  setSelectedLabel: () => {},
+  setSelectedLabel: () => { },
   isFiltering: false,
   searchValue: "",
-  setSearchValue: () => {},
+  setSearchValue: () => { },
   isLoading: false,
   open: false,
   defaultOptions: [],
   triggerRef: null,
   contentWidth: 0,
-  setContentWidth: () => {},
+  setContentWidth: () => { },
   secured: false,
   showSeparator: true,
 });
@@ -223,8 +223,8 @@ const MVPSelectTrigger = React.forwardRef<
           <div
             className={
               selectedLabel === "" ||
-              selectedLabel === undefined ||
-              selectedLabel === null
+                selectedLabel === undefined ||
+                selectedLabel === null
                 ? "truncate font-normal text-[#999999]"
                 : "truncate"
             }
@@ -341,7 +341,6 @@ const MVPSelectInput = React.forwardRef<
       setSearchValue("");
     }
   }, [open]);
-  const { t } = useTranslation("bx_v1");
 
   return (
     <div className="flex h-[44px] items-center rounded-[12px] border-b border-gray-200 px-3">
@@ -357,7 +356,7 @@ const MVPSelectInput = React.forwardRef<
         }}
         {...props}
         placeholder={
-          props?.placeholder ? props?.placeholder : t("bx_v1:cm_search")
+          props?.placeholder ? props?.placeholder : "Search"
         }
       />
       <Search className="borde-[2px] mr-2 h-4 w-4 shrink-0 text-primary" />
@@ -470,12 +469,12 @@ const MVPSelectEmpty = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => {
   const { searchValue } = React.useContext(dropDownContext);
-  const { t } = useTranslation("bx_v1");
+
   return (
     <CommandEmpty ref={ref} className="py-6 text-center text-sm font-medium">
       {searchValue
-        ? t("bx_v1:cm_no_search_results_found")
-        : t("bx_v1:cm_no_data")}
+        ? "No search results found"
+        : "No Data"}
     </CommandEmpty>
   );
 });
@@ -528,7 +527,7 @@ const MVPSelectItem = React.forwardRef<
     let selectedValue = val;
     try {
       selectedValue = JSON.parse(selectedValue);
-    } catch (error) {}
+    } catch (error) { }
 
     setSelectedLabel(label);
     onChange && onChange(selectedValue as any);

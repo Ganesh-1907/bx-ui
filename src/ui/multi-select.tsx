@@ -225,7 +225,6 @@ export function MultiSelect({
       })
   );
 
-  const { t } = useTranslation(["common", "bx_v1"]);
   return (
     <div className="grid w-full items-center font-medium">
       <Command className="overflow-visible bg-transparent">
@@ -354,7 +353,7 @@ export function MultiSelect({
                   disabled={disabled}
                 >
                   <span className="text-[16px] leading-none">+</span>{" "}
-                  {t("add_button")}
+                  Add
                 </button>
               </div>
             )}
@@ -427,7 +426,7 @@ export function MultiSelect({
                     placeholder={
                       searchPlaceholder
                         ? searchPlaceholder
-                        : t("bx_v1:cm_search")
+                        : "Search"
                     }
                     value={searchValue}
                   />
@@ -455,8 +454,8 @@ export function MultiSelect({
                     <CommandList className="max-h-[224px]">
                       <CommandEmpty>
                         {searchValue
-                          ? t("bx_v1:cm_no_search_results_found")
-                          : t("bx_v1:cm_no_data")}
+                          ? "No search results found"
+                          : "No Data"}
                       </CommandEmpty>
                       <GetScrollTypesAlert
                         id={"multiselect"}
