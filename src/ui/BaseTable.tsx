@@ -50,7 +50,46 @@ interface IBaseTable<TData, TValue> {
    * Array of data objects to be displayed in the table
    */
   data: TData[];
-
+  /**
+   * Flag to enable Excel export selection logic (new logic)
+   * @default false
+   * @description This is a temporary prop introduced to facilitate migration from the legacy row selection approach
+   * (rowSelection/setRowSelection) to the new Excel export selection logic (selectedIds, unselectedIds, selectAllParent).
+   *
+   * The legacy approach required useEffect hooks and added complexity for state synchronization. This flag allows gradual
+   * migration: when true, uses the new approach with selectedIds, unselectedIds, selectAllParent, setSelectedIds,
+   * setUnselectedIds, and setSelectAllParent; when false, uses legacy React Table selection logic
+   * (rowSelection/setRowSelection).
+   *
+   * This prop will be removed once all usages are migrated from the legacy approach and rowSelection/setRowSelection
+   * are fully deprecated . The new props (selectedIds, unselectedIds, selectAllParent,
+   * setSelectedIds, setUnselectedIds, setSelectAllParent) are permanent replacements and will remain.
+   */
+  isExcelExport?: boolean;
+  /**
+   * Flag to indicate whether select all checkbox is checked (only used when isExcelExport is true)
+   */
+  selectAllParent?: boolean;
+  /**
+   * Array of selected ids (only used when isExcelExport is true)
+   */
+  selectedIds?: number[];
+  /**
+   * Array of unselected ids (only used when isExcelExport is true)
+   */
+  unselectedIds?: number[];
+  /**
+   * Function to update the selected ids
+   */
+  setSelectedIds?: (value: React.SetStateAction<number[]>) => void;
+  /**
+   * Function to update the unselected ids
+   */
+  setUnselectedIds?: (value: React.SetStateAction<number[]>) => void;
+  /**
+   * Function to update the select all parent
+   */
+  setSelectAllParent?: (value: React.SetStateAction<boolean>) => void;
   /**
    * Additional CSS classes to apply to the table
    */
@@ -138,11 +177,15 @@ interface IBaseTable<TData, TValue> {
 
   /**
    * Row selection state
+   * @deprecated Use selectedIds, unselectedIds, and selectAllParent instead (with isExcelExport flag enabled)
+   * @description Previously we used rowSelection and setRowSelection, which required useEffect hooks and added complexity to manage state synchronization. The new approach uses: isExcelExport (enable new logic), selectedIds, unselectedIds, selectAllParent, setSelectedIds, setUnselectedIds, and setSelectAllParent which provides better control without the need for useEffect and reduces complexity.
    */
   rowSelection?: RowSelectionState;
 
   /**
    * Function to update the row selection state to track the selected rows
+   * @deprecated Use setSelectedIds, setUnselectedIds, and setSelectAllParent instead (with isExcelExport flag enabled)
+   * @description Previously we used rowSelection and setRowSelection, which required useEffect hooks and added complexity to manage state synchronization. The new approach uses: isExcelExport (enable new logic), selectedIds, unselectedIds, selectAllParent, setSelectedIds, setUnselectedIds, and setSelectAllParent which provides better control without the need for useEffect and reduces complexity.
    */
   setRowSelection?: (value: React.SetStateAction<RowSelectionState>) => void;
   /**
@@ -215,7 +258,52 @@ export function BaseTable<TData, TValue>({
   tableContainerId = "base-table-container",
   handleUserColumnPreferences,
   tableId = "",
+  isExcelExport = false,
+  selectAllParent = false,
+  selectedIds = [],
+  unselectedIds = [],
+  setSelectedIds = () => {},
+  setUnselectedIds = () => {},
+  setSelectAllParent = () => {},
 }: IBaseTable<TData, TValue>) {
+  /**
+   * Merges user column preferences with UI columns (UNION operation)
+   * - Takes all keys from both UI columns and preferences
+   * - If key exists in preferences: use preference value
+   * - If key doesn't exist in preferences: default to true
+   *
+   * Examples:
+   * - UI: 10, Preferences: null → Returns 10 columns (all true)
+   * - UI: 12, Preferences: 10 → Returns 12 (10 from preferences + 2 new with true)
+   * - UI: 7, Preferences: 12 → Returns 12 (7 from preferences if match UI, + 5 from preferences, missing UI columns default to true)
+   */
+  const mergeColumnsWithUserPreferences = (
+    columns: any[],
+    userPreferences: { [key: string]: boolean } | undefined
+  ): { [key: string]: boolean } => {
+    // Extract keys from columns (accessorKey)
+    const columnKeys = columns
+      .map((col) => col.accessorKey)
+      .filter(Boolean) as string[];
+
+    // Get all keys from preferences (if exists)
+    const preferenceKeys = userPreferences ? Object.keys(userPreferences) : [];
+
+    // Union: Combine all keys from both UI columns and preferences
+    const allKeys = [...new Set([...columnKeys, ...preferenceKeys])];
+
+    // For each key: use preference value if exists, otherwise default to true
+    return allKeys.reduce(
+      (acc, key) => {
+        acc[key] = userPreferences?.hasOwnProperty(key)
+          ? userPreferences[key]
+          : true;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+  };
+
   // Initial visibility state for column selector
   const initialColumnVisibilityChanges: { [key: string]: boolean } =
     columns.reduce(
@@ -236,28 +324,31 @@ export function BaseTable<TData, TValue>({
       {}
     );
 
+  // Merge user preferences with UI columns (UNION operation)
+  // This handles:
+  // - UI has more columns than preferences: adds missing columns with default true
+  // - UI has fewer columns than preferences: includes all preferences
+  const mergedPreferences = React.useMemo(
+    () => mergeColumnsWithUserPreferences(columns, userColumnPreferences!),
+    [columns, userColumnPreferences]
+  );
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(
-      userColumnPreferences
-        ? userColumnPreferences
-        : initialColumnVisibilityChanges
+      mergedPreferences || initialColumnVisibilityChanges
     );
 
   //Local state for column selector to apply chnages when we click on apply button
   const [columnVisibilityChanges, setColumnVisibilityChanges] =
     useState<VisibilityState>(
-      userColumnPreferences
-        ? userColumnPreferences
-        : initialColumnVisibilityChanges
+      mergedPreferences || initialColumnVisibilityChanges
     );
 
-  // whenever userColumnPreferences get changed we need to update the values of those columns
   useEffect(() => {
-    if (userColumnPreferences) {
-      setColumnVisibility(userColumnPreferences as VisibilityState);
-      setColumnVisibilityChanges(userColumnPreferences as VisibilityState);
-    }
-  }, [userColumnPreferences]);
+    // Update state when merged preferences change
+    setColumnVisibility(mergedPreferences as VisibilityState);
+    setColumnVisibilityChanges(mergedPreferences as VisibilityState);
+  }, [mergedPreferences]);
 
   //initial state for select all checkbox
   const initialSelectAll =
@@ -410,6 +501,7 @@ export function BaseTable<TData, TValue>({
 
   //state variable to control the opening and closing of the column selector
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation(["common", "course.find_course", "bx_v1"]);
 
   /**
    * This function will set the drop down to open or close
@@ -481,6 +573,94 @@ export function BaseTable<TData, TValue>({
     };
   }, [tableRef.current, isFiltering]);
 
+  // Helper function to remove ID from array (reduces nesting)
+  const removeIdFromArray = (prev: number[], idToRemove: number): number[] => {
+    return prev.filter((id) => id !== idToRemove);
+  };
+
+  // Helper function to handle row checkbox change to reduce nesting
+  const handleRowCheckboxChange = (row: any, value: boolean): void => {
+    if (!isExcelExport) {
+      // Legacy logic
+      row?.toggleSelected(!!value);
+      return;
+    }
+
+    // Extract row ID once to reduce nesting
+    const rowId = Number(row?.id);
+
+    // Flatten nested conditions to reduce nesting levels
+    if (selectAllParent && value) {
+      // User CHECKS checkbox → Remove from unselectedIds (row is now selected)
+      setUnselectedIds((prev) => removeIdFromArray(prev, rowId));
+      return;
+    }
+
+    if (selectAllParent && !value) {
+      // User UNCHECKS checkbox → Add to unselectedIds (row is now unselected)
+      setUnselectedIds((prev) => [...prev, rowId]);
+      return;
+    }
+
+    if (!selectAllParent && value) {
+      // User CHECKS checkbox → Add to selectedIds
+      setSelectedIds((prev) => [...prev, rowId]);
+      return;
+    }
+
+    if (!selectAllParent && !value) {
+      // User UNCHECKS checkbox → Remove from selectedIds
+      setSelectedIds((prev) => removeIdFromArray(prev, rowId));
+    }
+  };
+
+  // Helper function to remove IDs from array using a Set (reduces nesting)
+  const removeIdsFromArrayUsingSet = (
+    prev: number[],
+    idsToRemove: Set<number>
+  ): number[] => {
+    return prev.filter((id) => !idsToRemove.has(id));
+  };
+
+  // Helper function to handle select all checkbox change to reduce nesting
+  const handleSelectAllCheckboxChange = (value: boolean): void => {
+    if (!isExcelExport) {
+      // Legacy logic
+      table.toggleAllPageRowsSelected(value);
+      return;
+    }
+
+    // Extract visible IDs once to avoid deep nesting
+    const visibleIds = data.map((row: any) => Number(row?.id));
+    const visibleIdsSet = new Set(visibleIds);
+
+    // Flatten nested conditions to reduce nesting levels
+    if (selectAllParent && value) {
+      // User CHECKS "Page Level Select All" → then all the data in table that is present in unselectedIds should be removed
+      setUnselectedIds((prev) =>
+        removeIdsFromArrayUsingSet(prev, visibleIdsSet)
+      );
+      return;
+    }
+
+    if (selectAllParent && !value) {
+      // User UNCHECKS "Page Level Select All" → then  all the data in the table should be added to unselectedIds
+      setUnselectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
+      return;
+    }
+
+    if (!selectAllParent && value) {
+      // User CHECKS "Page Level Select All" → Add all the data in the table to selectedIds
+      setSelectedIds((prev) => [...new Set([...prev, ...visibleIds])]);
+      return;
+    }
+
+    if (!selectAllParent && !value) {
+      // User UNCHECKS " Page Level Select All" → Remove all the data in the table from selectedIds
+      setSelectedIds((prev) => removeIdsFromArrayUsingSet(prev, visibleIdsSet));
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex max-h-[50px] flex-row items-center justify-between">
@@ -498,7 +678,7 @@ export function BaseTable<TData, TValue>({
                     className="flex h-10 w-[192px] flex-row justify-between rounded-xl hover:border hover:border-solid hover:border-primary"
                     id="base-table-column-selector-button"
                   >
-                    Columns
+                    {t("course.find_course:columns")}
                     <DropDown />
                   </Button>
                 </DropdownMenuTrigger>
@@ -514,7 +694,9 @@ export function BaseTable<TData, TValue>({
                           onCheckedChange={handleSelectAllChange}
                           id="base-table-column-selector-select-all-checkbox"
                         />
-                        <Text className="text-sm font-bold">Select All</Text>
+                        <Text className="text-sm font-bold">
+                          {t("course.find_course:select_all")}
+                        </Text>
                       </div>
                       {table
                         .getAllColumns()
@@ -555,7 +737,10 @@ export function BaseTable<TData, TValue>({
                         .map((column: any) => {
                           // display the enabled options
                           return (
-                            <div className="flex flex-row items-center gap-4">
+                            <div
+                              className="flex flex-row items-center gap-4"
+                              key={column.id}
+                            >
                               <Checkbox
                                 key={column.id}
                                 checked={columnVisibilityChanges[column.id]}
@@ -585,7 +770,7 @@ export function BaseTable<TData, TValue>({
                         onClick={applyColumnVisibilityChanges}
                         id="base-table-column-selector-apply-button"
                       >
-                        Apply
+                        {t("apply_button")}
                       </Button>
                     </div>
                   </div>
@@ -639,9 +824,36 @@ export function BaseTable<TData, TValue>({
                           }`}
                         >
                           <Checkbox
-                            checked={table.getIsAllPageRowsSelected()}
+                            checked={(() => {
+                              /*
+                            if isExcelExport is true then we are using the new logic
+                            if  selectAllParent is true then  whatever  the data in table that is not present in unselectedIds  then it should be checked
+                            if selectAllParent is not true then all the data in table should be present in selectedIds then it should be checked
+                              */
+                              if (!isExcelExport) {
+                                return table.getIsAllPageRowsSelected(); // Legacy logic
+                              }
+
+                              if (selectAllParent) {
+                                // If selectAllParent is true, check if no rows in data are in unselectedIds
+                                return (
+                                  total > 0 &&
+                                  !data.some((row: any) =>
+                                    unselectedIds.includes(Number(row?.id))
+                                  )
+                                );
+                              }
+
+                              // If selectAllParent is false, check if all rows in data are in selectedIds
+                              return (
+                                total > 0 &&
+                                data.every((row: any) =>
+                                  selectedIds.includes(Number(row?.id))
+                                )
+                              );
+                            })()}
                             onCheckedChange={(value: boolean) => {
-                              table.toggleAllPageRowsSelected(value);
+                              handleSelectAllCheckboxChange(value);
                             }}
                             aria-label="Select all"
                             id="base-table-select-all-checkbox"
@@ -730,10 +942,21 @@ export function BaseTable<TData, TValue>({
                             }`}
                           >
                             <Checkbox
-                              checked={row?.getIsSelected()}
-                              onCheckedChange={(value) =>
-                                row?.toggleSelected(!!value)
+                              checked={
+                                /*
+                                if isExcelExport is true then we are using the new logic
+                                if selectedIds includes the row id then the checkbox should be checked
+                                if unselectedIds does not include the row id and selectAllParent is true then the checkbox should be checked
+                                */
+                                isExcelExport
+                                  ? selectedIds.includes(Number(row?.id)) ||
+                                    (!unselectedIds.includes(Number(row?.id)) &&
+                                      selectAllParent)
+                                  : row?.getIsSelected() // Legacy logic
                               }
+                              onCheckedChange={(value) => {
+                                handleRowCheckboxChange(row, !!value);
+                              }}
                               aria-label="Select row"
                             />
                           </TableCell>
@@ -844,7 +1067,9 @@ export function BaseTable<TData, TValue>({
                     className="h-8 w-[131px]"
                     id="base-table-page-size"
                   >
-                    <Text className="text-grey1">Showing</Text>
+                    <Text className="text-grey1">
+                      {t("course.find_course:showing")}
+                    </Text>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent side="top">
@@ -864,7 +1089,9 @@ export function BaseTable<TData, TValue>({
                     )}
                   </SelectContent>
                 </Select>
-                <Text className="text-sm font-normal">of {total}</Text>
+                <Text className="text-sm font-normal">
+                  {t("course.find_course:of")} {total}
+                </Text>
               </div>
             )}
           </div>
@@ -924,6 +1151,8 @@ const DataPagination = ({
     }
   }
 
+  const { t } = useTranslation(["common", "bx_v1"]);
+
   return (
     <div className="flex flex-row items-center space-x-2 self-center p-2 text-xs">
       {/* prev button */}
@@ -936,7 +1165,7 @@ const DataPagination = ({
           disabled={current <= 1}
           id="base-table-pagination-prev-button"
         >
-          Prev
+          {t("bx_v1:cm_prev")}
         </Button>
       )}
       {/* pages buttons */}
@@ -970,9 +1199,10 @@ const DataPagination = ({
           disabled={current >= pageCount}
           id="base-table-pagination-next-button"
         >
-          Next
+          {t("next")}
         </Button>
       )}
     </div>
   );
 };
+
